@@ -18,7 +18,7 @@ Database (AWS RDS MySQL)
 - 📈 모델별 비용 집계
 - 🏆 프로젝트별 비용 랭킹
 - 📦 usage log 기반 실시간 데이터 반영
-- 🚧 (확장 예정) Budget / Circuit Breaker
+
 ---
 ## 🔌 API
 ### ✅ KPI 조회
