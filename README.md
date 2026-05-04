@@ -1,8 +1,9 @@
-# Spring AI Ledger
+# Token Ledger Cloud API
 ---
 ## Demo
-- 🌐 Frontend: https://token-ledger-platform.vercel.app
+- 🌐 Frontend: https://token-ledger-cloud-front.vercel.app
 - ⚙️ Backend API: http://52.78.69.13:8080  
+- 🧩 Frontend Repository: https://github.com/token-ledger/token-ledger-cloud-front
 ---
 ## Architecture
 
@@ -67,16 +68,10 @@ ___
 
 ./gradlew bootRun
 
-### Frontend (Next.js)
-
-npm install
-npm run dev
-
-
 🐳 배포 (EC2)
 
-docker build -t token-ai-ledger .
-docker run -d -p 8080:8080 token-ai-ledger
+docker build -t token-ledger-cloud-api .
+docker run -d -p 8080:8080 token-ledger-cloud-api
 
 ### Database (RDS)
 
@@ -89,7 +84,7 @@ ___
 ### Tech Stack
 
 * Backend: Spring Boot, JPA, MySQL
-* Frontend: Next.js (App Router), TailwindCSS
+* Frontend: Next.js (App Router), TailwindCSS (`token-ledger-cloud-front`)
 * Infra: AWS EC2, RDS, Docker, Vercel
 * Monitoring: Micrometer (확장 예정)
 

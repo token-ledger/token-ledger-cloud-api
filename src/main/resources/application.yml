@@ -1,6 +1,6 @@
 spring:
   application:
-    name: token-ai-ledger
+    name: token-ledger-cloud-api
 
   # 임시로 해놓은거 OpenAI key 설정 안해서 skip 해놓음
   autoconfigure:
