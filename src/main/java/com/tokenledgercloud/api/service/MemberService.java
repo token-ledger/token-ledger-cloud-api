@@ -43,19 +43,10 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public MemberResponse getCurrentMember(Authentication authentication) {
-		if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
-			OAuth2User principal = oauthToken.getPrincipal();
-			String email = principal.getAttribute("email");
-			return memberRepository.findByEmail(email)
-				.map(MemberResponse::from)
-				.orElseThrow(() -> new IllegalStateException("OAuth member not found"));
-		}
-		if (authentication instanceof UsernamePasswordAuthenticationToken
-			&& authentication.getPrincipal() instanceof UserDetails userDetails) {
-			return memberRepository.findByEmail(userDetails.getUsername())
-				.map(MemberResponse::from)
-				.orElseThrow(() -> new IllegalStateException("Member not found"));
-		}
-		throw new IllegalStateException("Unsupported authentication type");
+		String identifier = authentication.getName();
+		return memberRepository.findByEmail(identifier)
+			.or(() -> memberRepository.findByProviderId(identifier))
+			.map(MemberResponse::from)
+			.orElseThrow(() -> new IllegalStateException("Member not found for identifier: " + identifier));
 	}
 }

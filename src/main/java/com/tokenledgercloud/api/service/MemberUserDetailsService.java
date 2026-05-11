@@ -20,13 +20,18 @@ public class MemberUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Member member = memberRepository.findByEmail(username)
+			.or(() -> memberRepository.findByProviderId(username))
 			.orElseThrow(() -> new UsernameNotFoundException(username));
-		if (member.getPassword() == null || member.getPassword().isBlank()) {
-			throw new UsernameNotFoundException("Password login not available for this account");
-		}
+
+		// 소셜 로그인 사용자는 password 가 없으므로, 폼 로그인으로는 매칭되지 않는 placeholder 를 사용한다.
+		// JWT 인증 흐름에서는 password 검증을 거치지 않으므로 UserDetails 만 정상적으로 반환되면 된다.
+		String password = (member.getPassword() == null || member.getPassword().isBlank())
+			? "{noop}N/A_SOCIAL_LOGIN"
+			: member.getPassword();
+
 		return User.builder()
-			.username(member.getEmail())
-			.password(member.getPassword())
+			.username(member.getEmail() != null ? member.getEmail() : member.getProviderId())
+			.password(password)
 			.roles(member.getRole().name())
 			.build();
 	}

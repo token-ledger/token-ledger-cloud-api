@@ -5,6 +5,14 @@
 build/
 out/
 
+# Secrets / local env
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.yaml
+application-local.properties
+
 # OS/editor
 .DS_Store
 *.iml

@@ -6,11 +6,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.tokenledgercloud.api.service.CustomOAuth2UserService;
+import com.tokenledgercloud.api.global.security.JwtAuthenticationFilter;
+import com.tokenledgercloud.api.global.security.JwtTokenProvider;
+import com.tokenledgercloud.api.global.security.OAuth2SuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +26,15 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.cors(Customizer.withDefaults())
 			.csrf(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.headers(headers -> headers.frameOptions(frame -> frame.disable()))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/h2-console/**").permitAll()
@@ -38,11 +47,11 @@ public class SecurityConfig {
 				.requestMatchers("/login", "/oauth2/**", "/error").permitAll()
 				.anyRequest().authenticated()
 			)
-			.formLogin(form -> form.defaultSuccessUrl("/", true));
-			//.oauth2Login(oauth2 -> oauth2
-			//	.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-			//	.defaultSuccessUrl("/", true)	
-			//);
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+				.successHandler(oAuth2SuccessHandler)
+			)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
