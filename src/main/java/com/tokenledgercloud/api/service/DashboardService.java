@@ -12,6 +12,7 @@ import com.tokenledgercloud.api.domain.usage.UsageLogRepository;
 import com.tokenledgercloud.api.dto.dashboard.DashboardKpiResponse;
 import com.tokenledgercloud.api.dto.dashboard.ModelCostSummaryResponse;
 import com.tokenledgercloud.api.dto.dashboard.ProjectCostRankingResponse;
+import com.tokenledgercloud.api.global.exception.InvalidPeriodException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,16 +23,16 @@ public class DashboardService {
 	private final UsageLogRepository usageLogRepository;
 
 	@Transactional(readOnly = true)
-public DashboardKpiResponse getKpi(Long projectId, String period) {
-	TimeRange range = resolvePeriod(period);
-	var row = usageLogRepository.getKpi(projectId, range.from(), range.to());
+	public DashboardKpiResponse getKpi(Long projectId, String period) {
+		TimeRange range = resolvePeriod(period);
+		var row = usageLogRepository.getKpi(projectId, range.from(), range.to());
 
-	return new DashboardKpiResponse(
-		row.getTotalCost(),
-		row.getTotalTokens(),
-		row.getBlockedRequests()
-	);
-}
+		return new DashboardKpiResponse(
+			row.getTotalCost(),
+			row.getTotalTokens(),
+			row.getBlockedRequests()
+		);
+	}
 
 	@Transactional(readOnly = true)
 	public List<ModelCostSummaryResponse> getModelCostSummary(Long projectId, String period) {
@@ -73,14 +74,13 @@ public DashboardKpiResponse getKpi(Long projectId, String period) {
 				today.withDayOfMonth(1).atStartOfDay(),
 				today.plusDays(1).atStartOfDay()
 			);
-			default -> new TimeRange(
+			case "today" -> new TimeRange(
 				today.atStartOfDay(),
 				today.plusDays(1).atStartOfDay()
 			);
+			default -> throw new InvalidPeriodException();
 		};
 	}
-
-	
 
 	private record TimeRange(LocalDateTime from, LocalDateTime to) {
 	}

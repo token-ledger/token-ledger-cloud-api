@@ -13,3 +13,7 @@ spring:
             scope:
               - profile
               - email
+
+jwt:
+  secret: test-jwt-secret-value-test-jwt-secret-value
+  expiration: 86400000

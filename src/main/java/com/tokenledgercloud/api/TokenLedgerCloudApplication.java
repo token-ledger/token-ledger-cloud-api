@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TokenAiLedgerApplication {
+public class TokenLedgerCloudApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TokenAiLedgerApplication.class, args);
+		SpringApplication.run(TokenLedgerCloudApplication.class, args);
 	}
 }

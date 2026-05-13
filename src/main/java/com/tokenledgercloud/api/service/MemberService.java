@@ -1,11 +1,7 @@
 package com.tokenledgercloud.api.service;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +10,9 @@ import com.tokenledgercloud.api.domain.member.MemberRepository;
 import com.tokenledgercloud.api.domain.member.Role;
 import com.tokenledgercloud.api.dto.MemberResponse;
 import com.tokenledgercloud.api.dto.MemberSignupRequest;
+import com.tokenledgercloud.api.global.exception.DuplicateMemberEmailException;
+import com.tokenledgercloud.api.global.exception.MemberNotFoundException;
+import com.tokenledgercloud.api.global.exception.UnauthorizedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +26,7 @@ public class MemberService {
 	@Transactional
 	public MemberResponse signup(MemberSignupRequest request) {
 		if (memberRepository.findByEmail(request.email()).isPresent()) {
-			throw new IllegalArgumentException("Email already registered");
+			throw new DuplicateMemberEmailException();
 		}
 		Member member = Member.builder()
 			.email(request.email())
@@ -43,10 +42,14 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public MemberResponse getCurrentMember(Authentication authentication) {
+		if (authentication == null || !authentication.isAuthenticated()) {
+			throw new UnauthorizedException();
+		}
+
 		String identifier = authentication.getName();
 		return memberRepository.findByEmail(identifier)
 			.or(() -> memberRepository.findByProviderId(identifier))
 			.map(MemberResponse::from)
-			.orElseThrow(() -> new IllegalStateException("Member not found for identifier: " + identifier));
+			.orElseThrow(MemberNotFoundException::new);
 	}
 }

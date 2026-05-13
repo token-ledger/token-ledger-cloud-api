@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.tokenledgercloud.api.dto.dashboard.DashboardKpiResponse;
 import com.tokenledgercloud.api.dto.dashboard.ModelCostSummaryResponse;
 import com.tokenledgercloud.api.dto.dashboard.ProjectCostRankingResponse;
+import com.tokenledgercloud.api.global.response.ApiResponse;
 import com.tokenledgercloud.api.service.DashboardService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,25 +21,25 @@ public class DashboardController {
 	private final DashboardService dashboardService;
 
 	@GetMapping("/kpi")
-	public ResponseEntity<DashboardKpiResponse> kpi(
+	public ResponseEntity<ApiResponse<DashboardKpiResponse>> kpi(
 		@RequestParam(required = false) Long projectId,
 		@RequestParam(defaultValue = "today") String period
 	) {
-		return ResponseEntity.ok(dashboardService.getKpi(projectId, period));
+		return ResponseEntity.ok(ApiResponse.success(dashboardService.getKpi(projectId, period)));
 	}
 
 	@GetMapping("/model-cost-summary")
-	public ResponseEntity<List<ModelCostSummaryResponse>> modelCostSummary(
+	public ResponseEntity<ApiResponse<List<ModelCostSummaryResponse>>> modelCostSummary(
 		@RequestParam(required = false) Long projectId,
 		@RequestParam(defaultValue = "week") String period
 	) {
-		return ResponseEntity.ok(dashboardService.getModelCostSummary(projectId, period));
+		return ResponseEntity.ok(ApiResponse.success(dashboardService.getModelCostSummary(projectId, period)));
 	}
 
 	@GetMapping("/project-ranking")
-	public ResponseEntity<List<ProjectCostRankingResponse>> projectRanking(
+	public ResponseEntity<ApiResponse<List<ProjectCostRankingResponse>>> projectRanking(
 		@RequestParam(defaultValue = "month") String period
 	) {
-		return ResponseEntity.ok(dashboardService.getProjectCostRanking(period));
+		return ResponseEntity.ok(ApiResponse.success(dashboardService.getProjectCostRanking(period)));
 	}
 }

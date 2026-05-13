@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tokenledgercloud.api.dto.MemberResponse;
 import com.tokenledgercloud.api.dto.MemberSignupRequest;
+import com.tokenledgercloud.api.global.response.ApiResponse;
 import com.tokenledgercloud.api.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -22,20 +23,13 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/api/members")
-	public ResponseEntity<MemberResponse> signup(@Valid @RequestBody MemberSignupRequest request) {
-		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(memberService.signup(request));
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		}
+	public ResponseEntity<ApiResponse<MemberResponse>> signup(@Valid @RequestBody MemberSignupRequest request) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(ApiResponse.success("Member created successfully.", memberService.signup(request)));
 	}
 
 	@GetMapping("/api/me")
-	public ResponseEntity<MemberResponse> me(Authentication authentication) {
-		if (authentication == null || !authentication.isAuthenticated()) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-		return ResponseEntity.ok(memberService.getCurrentMember(authentication));
+	public ResponseEntity<ApiResponse<MemberResponse>> me(Authentication authentication) {
+		return ResponseEntity.ok(ApiResponse.success(memberService.getCurrentMember(authentication)));
 	}
 }
