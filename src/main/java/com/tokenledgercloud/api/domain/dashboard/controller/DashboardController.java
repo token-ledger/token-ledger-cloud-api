@@ -10,6 +10,7 @@ import com.tokenledgercloud.api.domain.dashboard.dto.ModelCostSummaryResponse;
 import com.tokenledgercloud.api.domain.dashboard.dto.ProjectCostRankingResponse;
 import com.tokenledgercloud.api.domain.dashboard.service.DashboardService;
 import com.tokenledgercloud.api.global.response.ApiResponse;
+import com.tokenledgercloud.api.domain.dashboard.dto.DashboardOverviewResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,5 +42,19 @@ public class DashboardController {
 		@RequestParam(defaultValue = "month") String period
 	) {
 		return ResponseEntity.ok(ApiResponse.success(dashboardService.getProjectCostRanking(period)));
+	}
+
+	@GetMapping("/overview")
+	public ResponseEntity<ApiResponse<DashboardOverviewResponse>> overview(
+		@RequestParam(required = false) String projectId,
+		@RequestParam(required = false) String environment,
+		@RequestParam String period
+	) {
+		return ResponseEntity.ok(
+			ApiResponse.success(
+				"대시보드 개요 조회 성공",
+				dashboardService.getOverview(projectId, environment, period)
+			)
+		);
 	}
 }
