@@ -20,8 +20,11 @@ public class ApiKey {
     @Column(length = 36)
     private String id;
 
-    @Column(name = "api_key", nullable = false, unique = true)
-    private String apiKey;
+    @Column(name = "hashed_key", nullable = false, unique = true)
+    private String hashedKey;
+
+    @Column(name = "display_key", nullable = false)
+    private String displayKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

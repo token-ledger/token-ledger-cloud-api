@@ -14,6 +14,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.tokenledgercloud.api.domain.member.service.CustomOAuth2UserService;
+import com.tokenledgercloud.api.domain.apikey.service.ApiKeyService;
+import com.tokenledgercloud.api.global.security.ApiKeyAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.JwtAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.JwtTokenProvider;
 import com.tokenledgercloud.api.global.security.OAuth2SuccessHandler;
@@ -28,6 +30,7 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final OAuth2SuccessHandler oAuth2SuccessHandler;
+	private final ApiKeyService apiKeyService;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,6 +54,7 @@ public class SecurityConfig {
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler)
 			)
+			.addFilterBefore(new ApiKeyAuthenticationFilter(apiKeyService), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

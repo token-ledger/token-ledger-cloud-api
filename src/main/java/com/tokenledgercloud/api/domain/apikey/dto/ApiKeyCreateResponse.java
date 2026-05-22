@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiKeyResponse {
+public class ApiKeyCreateResponse {
     private String id;
+    private String rawKey;
     private String displayKey;
     private String name;
     private LocalDateTime createdAt;
