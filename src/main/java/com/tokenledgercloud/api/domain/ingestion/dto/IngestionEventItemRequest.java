@@ -1,0 +1,32 @@
+package com.tokenledgercloud.api.domain.ingestion.dto;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.Map;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
+public record IngestionEventItemRequest(
+	@NotBlank String requestId,
+	@NotBlank String provider,
+	@NotBlank String model,
+	@NotNull @PositiveOrZero Long promptTokens,
+	@NotNull @PositiveOrZero Long completionTokens,
+	@PositiveOrZero Long reasoningTokens,
+	@PositiveOrZero Long cachedPromptTokens,
+	@PositiveOrZero Long totalTokens,
+	@DecimalMin("0.000000") BigDecimal promptCostUsd,
+	@DecimalMin("0.000000") BigDecimal completionCostUsd,
+	@DecimalMin("0.000000") BigDecimal reasoningCostUsd,
+	@DecimalMin("0.000000") BigDecimal cachedPromptCostUsd,
+	@DecimalMin("0.000000") BigDecimal totalCostUsd,
+	String pricingPlanId,
+	@NotBlank String pricingVersion,
+	String sourceType,
+	Map<String, Object> metadata,
+	@NotNull OffsetDateTime occurredAt
+) {
+}
