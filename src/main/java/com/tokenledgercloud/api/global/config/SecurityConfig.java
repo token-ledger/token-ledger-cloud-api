@@ -40,6 +40,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.headers(headers -> headers.frameOptions(frame -> frame.disable()))
 			.authorizeHttpRequests(auth -> auth
+				
 				.requestMatchers("/h2-console/**").permitAll()
 				.requestMatchers("/actuator/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -48,6 +49,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/dashboard/**").permitAll()
 				.requestMatchers("/dashboard").permitAll()
 				.requestMatchers("/login", "/oauth2/**", "/error").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/pricing-catalogs/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2
