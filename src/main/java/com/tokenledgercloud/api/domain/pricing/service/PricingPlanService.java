@@ -15,6 +15,7 @@ import com.tokenledgercloud.api.domain.pricing.dto.PricingPlanItemResponse;
 import com.tokenledgercloud.api.domain.pricing.dto.PricingPlanListResponse;
 import com.tokenledgercloud.api.domain.pricing.entity.PricingPlan;
 import com.tokenledgercloud.api.domain.pricing.repository.PricingPlanRepository;
+import com.tokenledgercloud.api.global.exception.InvalidPricingEffectivePeriodException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,8 @@ public class PricingPlanService {
 
 	@Transactional
 	public PricingPlanCreateResponse create(PricingPlanCreateRequest request) {
+		validateEffectivePeriod(request);
+
 		PricingPlan plan = PricingPlan.builder()
 			.provider(request.provider())
 			.model(request.model())
@@ -50,13 +53,20 @@ public class PricingPlanService {
 			pricingPlanRepository.findPricingPlans(
 					blankToNull(provider),
 					blankToNull(model),
-					Boolean.TRUE.equals(activeOnly)
+					Boolean.TRUE.equals(activeOnly),
+					LocalDateTime.now(ZoneOffset.UTC)
 				)
 				.stream()
 				.map(PricingPlanItemResponse::from)
 				.toList();
 
 		return new PricingPlanListResponse(items);
+	}
+
+	private void validateEffectivePeriod(PricingPlanCreateRequest request) {
+		if (request.effectiveTo() != null && !request.effectiveTo().isAfter(request.effectiveFrom())) {
+			throw new InvalidPricingEffectivePeriodException();
+		}
 	}
 
 	private BigDecimal safe(BigDecimal value) {

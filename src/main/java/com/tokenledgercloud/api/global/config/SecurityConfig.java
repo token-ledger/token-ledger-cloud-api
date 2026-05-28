@@ -50,7 +50,9 @@ public class SecurityConfig {
 				.requestMatchers("/dashboard").permitAll()
 				.requestMatchers("/login", "/oauth2/**", "/error").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/pricing-catalogs/**").permitAll()
-				.anyRequest().authenticated()
+				//.anyRequest().authenticated()
+				.anyRequest().permitAll() //개발용
+
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))

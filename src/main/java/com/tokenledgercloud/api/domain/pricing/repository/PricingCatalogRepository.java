@@ -12,16 +12,16 @@ import com.tokenledgercloud.api.domain.pricing.entity.PricingCatalog;
 public interface PricingCatalogRepository extends JpaRepository<PricingCatalog, String> {
 
 	@Query("""
-		select c
-		from PricingCatalog c
-		where c.catalogKey = :catalogKey
-		  and c.isActive = true
-		order by c.publishedAt desc
-	""")
-	List<PricingCatalog> findLatestActiveCatalog(
-		String catalogKey,
-		Pageable pageable
-	);
+        select c
+        from PricingCatalog c
+        where c.catalogKey = :catalogKey
+        and c.isActive = true
+        order by coalesce(c.publishedAt, c.createdAt) desc
+    """)
+    List<PricingCatalog> findLatestActiveCatalog(
+        String catalogKey,
+        Pageable pageable
+    );
 
 	@Query("""
 		select c

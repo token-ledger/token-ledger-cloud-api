@@ -24,6 +24,7 @@ public enum ErrorCode {
 	INVALID_EVENT_TYPE(HttpStatus.BAD_REQUEST, "EVENT-400", "Invalid event type."),
 	INVALID_PERIOD(HttpStatus.BAD_REQUEST, "DASHBOARD-400", "Unsupported period. Use today, week, or month."),
 	PRICING_CATALOG_NOT_FOUND(HttpStatus.NOT_FOUND, "PRICING-404", "Pricing catalog not found."),
+	INVALID_PRICING_EFFECTIVE_PERIOD(HttpStatus.BAD_REQUEST, "PRICING-400", "Invalid pricing effective period."),
 	PRICING_CATALOG_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PRICING-500", "Failed to generate pricing catalog.");
 
 	private final HttpStatus status;

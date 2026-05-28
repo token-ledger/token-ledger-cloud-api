@@ -2,8 +2,8 @@ package com.tokenledgercloud.api.domain.pricing.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -62,8 +62,8 @@ public class PricingPlan {
 			id = UUID.randomUUID().toString();
 		}
 		if (createdAt == null) {
-			createdAt = LocalDateTime.now();
-		}
+            createdAt = LocalDateTime.now(ZoneOffset.UTC);
+        }
 		if (reasoningRate == null) {
 			reasoningRate = BigDecimal.ZERO;
 		}

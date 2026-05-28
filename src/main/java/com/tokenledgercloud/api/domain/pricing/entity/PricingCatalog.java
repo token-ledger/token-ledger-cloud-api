@@ -1,6 +1,7 @@
 package com.tokenledgercloud.api.domain.pricing.entity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -61,7 +62,7 @@ public class PricingCatalog {
 			isActive = true;
 		}
 
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
 		if (createdAt == null) {
 			createdAt = now;
@@ -74,6 +75,6 @@ public class PricingCatalog {
 
 	@PreUpdate
 	void preUpdate() {
-		updatedAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now(ZoneOffset.UTC);
 	}
 }
