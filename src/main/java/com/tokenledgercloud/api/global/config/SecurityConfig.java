@@ -13,7 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.tokenledgercloud.api.service.CustomOAuth2UserService;
+import com.tokenledgercloud.api.domain.apikey.service.ApiKeyService;
+import com.tokenledgercloud.api.domain.member.service.CustomOAuth2UserService;
 import com.tokenledgercloud.api.global.security.JwtAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.ApiKeyAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.JwtTokenProvider;

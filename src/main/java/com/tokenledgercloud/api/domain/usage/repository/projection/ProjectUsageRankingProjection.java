@@ -1,11 +1,11 @@
-package com.tokenledgercloud.api.domain.usage;
+package com.tokenledgercloud.api.domain.usage.repository.projection;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public interface ProjectUsageRankingProjection {
 
-	Long getProjectId();
+	String getProjectId();
 
 	BigDecimal getTotalCost();
 

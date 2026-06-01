@@ -1,15 +1,13 @@
-package com.tokenledgercloud.api.dto.project;
+package com.tokenledgercloud.api.domain.project.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import com.tokenledgercloud.api.domain.project.ProjectStatus;
 
 public record ProjectDetailResponse(
 	String projectId,
 	String name,
 	String projectKey,
-	ProjectStatus status,
+	String status,
 	List<String> environments,
 	String defaultModel,
 	BigDecimal latestMonthlyCostUsd,
