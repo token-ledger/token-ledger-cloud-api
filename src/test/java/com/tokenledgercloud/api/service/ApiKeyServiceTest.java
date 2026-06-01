@@ -105,10 +105,10 @@ class ApiKeyServiceTest {
         ApiKey apiKey = ApiKey.builder()
                 .hashedKey(hashedKey)
                 .member(testMember)
-                .isActive(true)
+                .active(true)
                 .build();
 
-        given(apiKeyRepository.findByHashedKeyAndIsActiveTrue(hashedKey)).willReturn(Optional.of(apiKey));
+        given(apiKeyRepository.findByHashedKeyAndActiveTrue(hashedKey)).willReturn(Optional.of(apiKey));
 
         // when
         Member result = apiKeyService.verifyApiKey(rawKey);
@@ -124,7 +124,7 @@ class ApiKeyServiceTest {
         // given
         String rawKey = "tk-wrong-key";
         String hashedKey = HashingUtil.hash(rawKey);
-        given(apiKeyRepository.findByHashedKeyAndIsActiveTrue(hashedKey)).willReturn(Optional.empty());
+        given(apiKeyRepository.findByHashedKeyAndActiveTrue(hashedKey)).willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> apiKeyService.verifyApiKey(rawKey))

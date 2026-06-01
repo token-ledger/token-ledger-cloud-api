@@ -45,7 +45,7 @@ public class ApiKeyService {
                 .displayKey(displayKey)
                 .member(member)
                 .name(request.getName())
-                .isActive(true)
+                .active(true)
                 .build();
 
         apiKeyRepository.save(apiKey);
@@ -56,7 +56,7 @@ public class ApiKeyService {
     @Transactional
     public Member verifyApiKey(String rawKey) {
         String hashedKey = HashingUtil.hash(rawKey);
-        ApiKey apiKey = apiKeyRepository.findByHashedKeyAndIsActiveTrue(hashedKey)
+        ApiKey apiKey = apiKeyRepository.findByHashedKeyAndActiveTrue(hashedKey)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or inactive API Key"));
 
         apiKey.setLastUsedAt(LocalDateTime.now());
@@ -107,7 +107,7 @@ public class ApiKeyService {
                 .displayKey(apiKey.getDisplayKey())
                 .name(apiKey.getName())
                 .createdAt(apiKey.getCreatedAt())
-                .isActive(apiKey.isActive())
+                .active(apiKey.isActive())
                 .build();
     }
 
@@ -118,7 +118,7 @@ public class ApiKeyService {
                 .displayKey(apiKey.getDisplayKey())
                 .name(apiKey.getName())
                 .createdAt(apiKey.getCreatedAt())
-                .isActive(apiKey.isActive())
+                .active(apiKey.isActive())
                 .build();
     }
 }

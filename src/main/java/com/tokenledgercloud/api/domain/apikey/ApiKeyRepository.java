@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
     Optional<ApiKey> findByHashedKey(String hashedKey);
-    Optional<ApiKey> findByHashedKeyAndIsActiveTrue(String hashedKey);
+    Optional<ApiKey> findByHashedKeyAndActiveTrue(String hashedKey);
     List<ApiKey> findByMemberId(Long memberId);
 }

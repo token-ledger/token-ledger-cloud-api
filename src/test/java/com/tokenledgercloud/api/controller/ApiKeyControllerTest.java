@@ -57,7 +57,7 @@ class ApiKeyControllerTest {
                 .displayKey("tk-123...6789")
                 .name("New Key")
                 .createdAt(LocalDateTime.now())
-                .isActive(true)
+                .active(true)
                 .build();
 
         given(apiKeyService.createApiKey(any(), any())).willReturn(response);
@@ -79,7 +79,7 @@ class ApiKeyControllerTest {
                 .id(1L)
                 .displayKey("tk-abc...def")
                 .name("My Key")
-                .isActive(true)
+                .active(true)
                 .build();
 
         given(apiKeyService.getMyApiKeys(any())).willReturn(List.of(response));

@@ -40,7 +40,7 @@ public class ApiKey {
 
     @Column(name = "is_active")
     @Builder.Default
-    private boolean isActive = true;
+    private boolean active = true;
 
     @PrePersist
     public void prePersist() {

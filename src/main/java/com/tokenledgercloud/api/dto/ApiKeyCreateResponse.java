@@ -17,5 +17,5 @@ public class ApiKeyCreateResponse {
     private String displayKey;
     private String name;
     private LocalDateTime createdAt;
-    private boolean isActive;
+    private boolean active;
 }

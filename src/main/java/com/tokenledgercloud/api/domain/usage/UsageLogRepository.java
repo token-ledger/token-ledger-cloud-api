@@ -1,6 +1,7 @@
 package com.tokenledgercloud.api.domain.usage;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,41 @@ public interface UsageLogRepository extends JpaRepository<UsageLog, Long> {
 		order by sum(u.totalCost) desc
 	""")
 	List<ProjectCostRankingProjection> findProjectCostRanking(
+		LocalDateTime from,
+		LocalDateTime to
+	);
+
+	@Query("""
+		select u.projectId as projectId,
+		       coalesce(sum(u.totalCost), 0) as totalCost,
+		       coalesce(sum(u.totalTokens), 0) as totalTokens,
+		       max(u.startedAt) as latestUsedAt
+		from UsageLog u
+		where u.projectId in :projectIds
+		  and u.startedAt >= :from
+		  and u.startedAt < :to
+		group by u.projectId
+		order by sum(u.totalCost) desc, max(u.startedAt) desc
+	""")
+	List<ProjectUsageRankingProjection> findProjectUsageRanking(
+		Collection<Long> projectIds,
+		LocalDateTime from,
+		LocalDateTime to
+	);
+
+	@Query("""
+		select u.modelId as modelId,
+		       coalesce(sum(u.totalCost), 0) as totalCost,
+		       coalesce(sum(u.totalTokens), 0) as totalTokens
+		from UsageLog u
+		where u.projectId = :projectId
+		  and u.startedAt >= :from
+		  and u.startedAt < :to
+		group by u.modelId
+		order by sum(u.totalCost) desc
+	""")
+	List<ModelCostSummaryProjection> findTopModelsByProjectId(
+		Long projectId,
 		LocalDateTime from,
 		LocalDateTime to
 	);
