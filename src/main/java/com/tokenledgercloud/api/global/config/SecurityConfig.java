@@ -14,7 +14,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.tokenledgercloud.api.service.CustomOAuth2UserService;
-import com.tokenledgercloud.api.service.ApiKeyService;
 import com.tokenledgercloud.api.global.security.JwtAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.ApiKeyAuthenticationFilter;
 import com.tokenledgercloud.api.global.security.JwtTokenProvider;
@@ -45,6 +44,7 @@ public class SecurityConfig {
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/members").permitAll()
 				.requestMatchers(HttpMethod.POST, "/internal/usage-logs").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/ingestion/**").permitAll()
 				.requestMatchers("/api/dashboard/**").permitAll()
 				.requestMatchers("/dashboard").permitAll()
 				.requestMatchers("/login", "/oauth2/**", "/error").permitAll()

@@ -1,10 +1,11 @@
 package com.tokenledgercloud.api.domain.apikey;
 
-import com.tokenledgercloud.api.domain.member.Member;
+import com.tokenledgercloud.api.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "api_keys")
@@ -16,8 +17,8 @@ import java.time.LocalDateTime;
 public class ApiKey {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 36)
+    private String id;
 
     @Column(name = "hashed_key", nullable = false, unique = true)
     private String hashedKey;
@@ -32,7 +33,7 @@ public class ApiKey {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "last_used_at")
@@ -40,10 +41,13 @@ public class ApiKey {
 
     @Column(name = "is_active")
     @Builder.Default
-    private boolean active = true;
+    private boolean isActive = true;
 
     @PrePersist
     public void prePersist() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now();
         }
