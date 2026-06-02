@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Token Ledger Cloud API Dashboard</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-900 text-slate-200 p-8">
+	<nav class="mb-8 flex justify-between items-center">
+		<div>
+			<h1 class="text-2xl font-bold text-white">Token Ledger Cloud API Dashboard</h1>
+			<p class="text-slate-400 text-sm">비용 / 토큰 집계 조회 테스트</p>
+		</div>
+		<a href="/" class="text-emerald-400 hover:underline">홈으로</a>
+	</nav>
+
+	<section class="flex flex-col md:flex-row gap-3 mb-6 items-start md:items-center">
+		<input id="projectId" value="1" placeholder="projectId"
+			class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"/>
+
+		<button onclick="changePeriod('today')" class="period-btn">오늘</button>
+		<button onclick="changePeriod('week')" class="period-btn">이번 주</button>
+		<button onclick="changePeriod('month')" class="period-btn">이번 달</button>
+
+		<button onclick="loadDashboard()"
+			class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2 rounded-lg">
+			조회
+		</button>
+	</section>
+
+	<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+		<div class="card">
+			<p class="text-slate-400 text-sm">총 발생 비용</p>
+			<h3 id="kpiCost" class="text-3xl font-bold text-emerald-400">$0</h3>
+		</div>
+
+		<div class="card">
+			<p class="text-slate-400 text-sm">총 사용 토큰</p>
+			<h3 id="kpiTokens" class="text-3xl font-bold text-blue-400">0</h3>
+		</div>
+
+		<div class="card">
+			<p class="text-slate-400 text-sm">차단된 요청</p>
+			<h3 id="kpiBlocked" class="text-3xl font-bold text-rose-400">0</h3>
+		</div>
+	</section>
+
+	<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+		<div class="card">
+			<h2 class="text-lg font-bold mb-4">모델별 비용 / 토큰 조회</h2>
+			<table class="w-full text-sm">
+				<thead class="text-slate-400 border-b border-slate-700">
+					<tr>
+						<th class="py-2 text-left">모델</th>
+						<th class="py-2 text-right">총 비용</th>
+						<th class="py-2 text-right">총 토큰</th>
+					</tr>
+				</thead>
+				<tbody id="modelBody"></tbody>
+			</table>
+		</div>
+
+		<div class="card">
+			<h2 class="text-lg font-bold mb-4">프로젝트별 비용 랭킹</h2>
+			<table class="w-full text-sm">
+				<thead class="text-slate-400 border-b border-slate-700">
+					<tr>
+						<th class="py-2 text-left">Project ID</th>
+						<th class="py-2 text-right">총 비용</th>
+						<th class="py-2 text-right">총 토큰</th>
+					</tr>
+				</thead>
+				<tbody id="rankingBody"></tbody>
+			</table>
+		</div>
+	</section>
+
+
+
+	<script>
+		let period = 'week';
+
+		document.querySelectorAll('.card').forEach(el => {
+			el.className = 'bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg';
+		});
+
+		document.querySelectorAll('.period-btn').forEach(el => {
+			el.className = 'period-btn px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700';
+		});
+
+		function changePeriod(value) {
+			period = value;
+			loadDashboard();
+		}
+
+		async function loadDashboard() {
+			const projectId = document.getElementById('projectId').value || 1;
+
+			const kpi = await fetch(`/api/dashboard/kpi?projectId=${projectId}&period=${period}`).then(r => r.json());
+
+			document.getElementById('kpiCost').textContent = `$${Number(kpi.totalCost).toFixed(8)}`;
+			document.getElementById('kpiTokens').textContent = Number(kpi.totalTokens).toLocaleString();
+			document.getElementById('kpiBlocked').textContent = kpi.blockedRequests;
+
+			const models = await fetch(`/api/dashboard/model-cost-summary?projectId=${projectId}&period=${period}`).then(r => r.json());
+
+			document.getElementById('modelBody').innerHTML = models.length === 0
+				? `<tr><td colspan="3" class="py-4 text-center text-slate-500">데이터가 없습니다.</td></tr>`
+				: models.map(row => `
+					<tr class="border-b border-slate-700/50">
+						<td class="py-3">${row.modelId}</td>
+						<td class="py-3 text-right text-emerald-400">$${Number(row.totalCost).toFixed(8)}</td>
+						<td class="py-3 text-right">${Number(row.totalTokens).toLocaleString()}</td>
+					</tr>
+				`).join('');
+
+			const rankings = await fetch(`/api/dashboard/project-ranking?period=${period}`).then(r => r.json());
+
+			document.getElementById('rankingBody').innerHTML = rankings.length === 0
+				? `<tr><td colspan="3" class="py-4 text-center text-slate-500">데이터가 없습니다.</td></tr>`
+				: rankings.map(row => `
+					<tr class="border-b border-slate-700/50">
+						<td class="py-3">Project ${row.projectId}</td>
+						<td class="py-3 text-right text-emerald-400">$${Number(row.totalCost).toFixed(8)}</td>
+						<td class="py-3 text-right">${Number(row.totalTokens).toLocaleString()}</td>
+					</tr>
+				`).join('');
+		}
+
+		loadDashboard();
+	</script>
+</body>
+</html>
