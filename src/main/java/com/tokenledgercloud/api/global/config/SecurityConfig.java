@@ -40,6 +40,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.headers(headers -> headers.frameOptions(frame -> frame.disable()))
 			.authorizeHttpRequests(auth -> auth
+				
 				.requestMatchers("/h2-console/**").permitAll()
 				.requestMatchers("/actuator/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -49,7 +50,10 @@ public class SecurityConfig {
 				.requestMatchers("/api/dashboard/**").permitAll()
 				.requestMatchers("/dashboard").permitAll()
 				.requestMatchers("/login", "/oauth2/**", "/error").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers(HttpMethod.GET, "/api/pricing-catalogs/**").permitAll()
+				//.anyRequest().authenticated()
+				.anyRequest().permitAll() //개발용
+
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
